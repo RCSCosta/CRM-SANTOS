@@ -6,7 +6,7 @@
 <title>Santos Solução · CRM</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<!-- Supabase carregado via ESM no script principal -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <style>
 :root{
   --navy:#0B1629;--navy2:#152038;
@@ -395,23 +395,18 @@ textarea.fi-m{resize:vertical;min-height:72px;}
   </div>
 </div>
 
-<script type="module">
+<script>
 // ══════════════════════════════════════════════════
 // CONFIGURAÇÃO — substitua com seus dados do Supabase
 // ══════════════════════════════════════════════════
-const SUPABASE_URL = 'https://fpodkawezhwlyjnqmsvo.supabase.co';   // ex: https://xyzabc.supabase.co
-const SUPABASE_KEY = 'sb_publishable_CUe-DcskXfSTvJ1Wtj0mXQ_3_c85N4b';           // chave anon pública do Supabase
+const SUPABASE_URL = 'COLE_AQUI_A_URL_DO_SUPABASE';
+const SUPABASE_KEY = 'COLE_AQUI_A_ANON_KEY';
 
-// ── Carrega Supabase via ESM (funciona em qualquer ambiente) ──
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-
-// ── Detecta se as credenciais foram configuradas ──
 const CONFIGURADO = !SUPABASE_URL.includes('COLE_AQUI') && !SUPABASE_KEY.includes('COLE_AQUI');
-const BRIEFING_FN = `${SUPABASE_URL}/functions/v1/briefing`;
+const BRIEFING_FN = SUPABASE_URL + '/functions/v1/briefing';
 
-// ── Cria cliente Supabase (ou mock se não configurado) ──
 const sb = CONFIGURADO
-  ? createClient(SUPABASE_URL, SUPABASE_KEY)
+  ? supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
   : null;
 
 // ── Se não configurado, mostra tela de setup ──
@@ -1178,15 +1173,6 @@ function openAddFu() {
 // START
 // ══════════════════════════════════════════════════
 initAuth();
-
-// ── Expõe funções para onclick handlers no HTML ──
-const fns = [nav,openAdd,sair,closeModal,saveM,markFu,
-  entrar,registrar,toggleMode,openAddCli,openEditCli,
-  openAddNeg,openNegDetail,selTipoNeg,addChkItem,toggleChkItem,
-  deleteChkItem,saveNegObs,updateNegField,openAddVis,openEditVis,
-  registrarVis,gerarBriefing,openAddFu,renderClientes,renderNeg,
-  renderVisitas,salvarCfg,aplicarCfg];
-fns.forEach(f => { if(f && f.name) window[f.name] = f; });
 
 } // fecha o bloco: if (CONFIGURADO)
 </script>

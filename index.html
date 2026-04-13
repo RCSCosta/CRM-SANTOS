@@ -402,7 +402,7 @@ textarea.fi-m{resize:vertical;min-height:72px;}
 const SUPABASE_URL = 'https://fpodkawezhwlyjnqmsvo.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZwb2RrYXdlemh3bHlqbnFtc3ZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwODk2MDQsImV4cCI6MjA5MTY2NTYwNH0.cdUnII3PRYobQIKURfprNAEjlPfN4rpE3W_mh4MiTfY';
 
-const CONFIGURADO = true;
+const CONFIGURADO = SUPABASE_URL.startsWith('https://fpodkawezhwlyjnqmsvo.supabase.co') && SUPABASE_KEY.startsWith('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZwb2RrYXdlemh3bHlqbnFtc3ZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwODk2MDQsImV4cCI6MjA5MTY2NTYwNH0.cdUnII3PRYobQIKURfprNAEjlPfN4rpE3W_mh4MiTfY');
 const BRIEFING_FN = SUPABASE_URL + '/functions/v1/briefing';
 
 const sb = CONFIGURADO

@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Santos Solução · CRM</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!-- Supabase carregado via ESM no script principal -->
+<style>
+:root{
+  --navy:#0B1629;--navy2:#152038;
+  --teal:#16A37A;--teal2:#5DCAA5;--teal-bg:#EBF8F3;
+  --amber:#F59E0B;--amber-bg:#FFFBEB;--amber-dark:#92400E;
+  --red:#EF4444;--red-bg:#FEF2F2;--red-dark:#991B1B;
+  --blue:#3B82F6;--blue-bg:#EFF6FF;--blue-dark:#1E40AF;
+  --violet:#8B5CF6;--violet-bg:#F5F3FF;--violet-dark:#5B21B6;
+  --bg:#F0F2F5;--bg2:#E5E8ED;--white:#fff;
+  --border:#E2E6EC;--border2:#D0D5DD;
+  --text:#0F1923;--text2:#4B5563;--text3:#9CA3AF;
+  --font:'Plus Jakarta Sans',sans-serif;
+  --mono:'DM Mono',monospace;
+  --r:12px;--r2:8px;
+  --shadow:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+  --shadow-md:0 4px 12px rgba(0,0,0,.08);
+  --shadow-lg:0 12px 32px rgba(0,0,0,.12);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:14px;-webkit-font-smoothing:antialiased;}
+
+/* ── LOGIN ── */
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:var(--navy);}
+.login-box{background:var(--white);border-radius:16px;padding:36px;width:380px;max-width:100%;box-shadow:var(--shadow-lg);}
+.login-logo{display:flex;align-items:center;gap:12px;margin-bottom:28px;}
+.login-ico{width:42px;height:42px;border-radius:11px;background:linear-gradient(135deg,var(--teal),var(--teal2));display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:#fff;}
+.login-brand{font-size:15px;font-weight:700;color:var(--navy);}
+.login-sub{font-size:12px;color:var(--text3);margin-top:2px;}
+.login-title{font-size:22px;font-weight:800;color:var(--navy);letter-spacing:-.03em;margin-bottom:6px;}
+.login-desc{font-size:13px;color:var(--text2);margin-bottom:24px;}
+.login-err{background:var(--red-bg);border:1px solid #FECACA;border-radius:8px;padding:10px 13px;font-size:13px;color:var(--red-dark);margin-bottom:14px;display:none;}
+.fl{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text2);margin-bottom:5px;display:block;}
+.fi{width:100%;padding:10px 12px;border:1px solid var(--border2);border-radius:8px;font-size:14px;color:var(--text);outline:none;font-family:var(--font);}
+.fi:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(22,163,122,.1);}
+.fg{margin-bottom:14px;}
+.btn-login{width:100%;padding:12px;background:var(--teal);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--font);transition:all .15s;margin-top:6px;}
+.btn-login:hover{background:#138B67;transform:translateY(-1px);}
+.btn-login:disabled{opacity:.6;cursor:not-allowed;transform:none;}
+.login-toggle{text-align:center;margin-top:16px;font-size:13px;color:var(--text2);}
+.login-toggle a{color:var(--teal);cursor:pointer;font-weight:600;text-decoration:none;}
+
+/* ── SHELL ── */
+.shell{display:flex;height:100vh;overflow:hidden;}
+.sidebar{width:240px;flex-shrink:0;background:var(--navy);display:flex;flex-direction:column;overflow-y:auto;}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.topbar{background:var(--white);border-bottom:1px solid var(--border);padding:0 24px;height:58px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;box-shadow:var(--shadow);}
+.content{flex:1;overflow-y:auto;padding:24px;}
+
+/* ── SIDEBAR ── */
+.brand{padding:20px 18px 16px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:11px;}
+.b-ico{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--teal),var(--teal2));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;flex-shrink:0;}
+.b-name{font-size:13px;font-weight:700;color:#fff;}
+.b-sub{font-size:10px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.1em;margin-top:2px;}
+.nav-sec{padding:14px 18px 4px;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.22);}
+.ni{display:flex;align-items:center;gap:9px;padding:9px 12px;border-radius:8px;cursor:pointer;color:rgba(255,255,255,.45);font-size:13px;font-weight:500;margin:1px 8px;transition:all .15s;position:relative;}
+.ni:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.8);}
+.ni.active{background:rgba(22,163,122,.18);color:#fff;}
+.ni.active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:20px;background:var(--teal2);border-radius:0 2px 2px 0;}
+.ni-ico{font-size:15px;width:20px;text-align:center;}
+.ni-badge{margin-left:auto;background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:2px 6px;border-radius:20px;}
+.sb-footer{margin-top:auto;border-top:1px solid rgba(255,255,255,.06);padding:14px;}
+.sb-user{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;background:rgba(255,255,255,.05);}
+.sb-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;}
+.sb-logout{margin-top:8px;width:100%;padding:7px;border:1px solid rgba(255,255,255,.12);border-radius:7px;background:transparent;color:rgba(255,255,255,.45);font-size:12px;cursor:pointer;font-family:var(--font);transition:all .15s;}
+.sb-logout:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.8);}
+
+/* ── TOPBAR ── */
+.pt{font-size:17px;font-weight:700;color:var(--navy);letter-spacing:-.02em;}
+.tb-r{display:flex;align-items:center;gap:8px;}
+.role-badge{font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;background:var(--teal-bg);color:#065F46;}
+
+/* ── BUTTONS ── */
+.btn{padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:600;transition:all .15s;display:inline-flex;align-items:center;gap:6px;font-family:var(--font);}
+.btn-p{background:var(--teal);color:#fff;box-shadow:0 1px 3px rgba(22,163,122,.3);}
+.btn-p:hover{background:#138B67;transform:translateY(-1px);}
+.btn-g{background:var(--white);color:var(--text2);border:1px solid var(--border2);}
+.btn-g:hover{background:var(--bg);}
+.btn-sm{padding:5px 12px;font-size:12px;}
+.btn-ai{background:linear-gradient(135deg,#6366f1,#8B5CF6);color:#fff;}
+.btn-ai:hover{opacity:.9;transform:translateY(-1px);}
+
+/* ── PAGES ── */
+.page{display:none;animation:fadeUp .2s ease;}
+.page.active{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+/* ── KPI ── */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px;}
+.kpi{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;box-shadow:var(--shadow);transition:transform .15s;position:relative;overflow:hidden;}
+.kpi:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);}
+.kpi-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);margin-bottom:10px;}
+.kpi-value{font-size:28px;font-weight:800;color:var(--navy);line-height:1;letter-spacing:-.03em;}
+.kpi-value.sm{font-size:20px;}
+.kpi-sub{font-size:12px;margin-top:6px;font-weight:500;}
+.kpi-icon{position:absolute;top:16px;right:16px;width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;}
+.ki-teal{background:var(--teal-bg);}
+.ki-blue{background:var(--blue-bg);}
+.ki-violet{background:var(--violet-bg);}
+.ki-amber{background:var(--amber-bg);}
+
+/* ── CARD ── */
+.card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:16px;box-shadow:var(--shadow);}
+.ch{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+.ct2{font-size:14px;font-weight:700;color:var(--navy);letter-spacing:-.01em;}
+.cb2{padding:16px 18px;}
+
+/* ── TABLE ── */
+.tw{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;}
+th{padding:10px 14px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);background:var(--bg);border-bottom:1px solid var(--border);}
+td{padding:11px 14px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:#FAFBFC;}
+
+/* ── TAGS ── */
+.tag{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;}
+.tg{background:var(--teal-bg);color:#065F46;}
+.ta{background:var(--amber-bg);color:var(--amber-dark);}
+.tr2{background:var(--red-bg);color:var(--red-dark);}
+.tb2{background:var(--blue-bg);color:var(--blue-dark);}
+.tv{background:var(--violet-bg);color:var(--violet-dark);}
+.tgr{background:var(--bg2);color:var(--text2);}
+
+/* ── INPUT ── */
+.srch{padding:7px 12px;border:1px solid var(--border2);border-radius:8px;font-size:13px;outline:none;background:var(--white);color:var(--text);font-family:var(--font);}
+.srch:focus{border-color:var(--teal);}
+
+/* ── KANBAN ── */
+.kanban{display:flex;gap:12px;overflow-x:auto;padding-bottom:8px;min-height:320px;}
+.kcol{min-width:188px;flex:1;background:var(--bg);border-radius:var(--r);padding:12px;display:flex;flex-direction:column;}
+.kh{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.kcnt{background:var(--white);border:1px solid var(--border);font-size:10px;padding:2px 7px;border-radius:10px;color:var(--text2);}
+.kc{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:8px;cursor:pointer;transition:all .15s;box-shadow:var(--shadow);}
+.kc:hover{box-shadow:var(--shadow-md);transform:translateY(-1px);}
+.kc-name{font-size:12px;font-weight:700;color:var(--navy);margin-bottom:3px;}
+.kc-val{font-size:13px;font-weight:800;color:var(--teal);letter-spacing:-.02em;margin-bottom:5px;}
+.kc-meta{font-size:11px;color:var(--text3);}
+.kadd{text-align:center;padding:8px;font-size:12px;color:var(--text3);cursor:pointer;border:1px dashed var(--border2);border-radius:8px;margin-top:auto;transition:all .15s;font-weight:500;}
+.kadd:hover{color:var(--teal);border-color:var(--teal);background:var(--teal-bg);}
+.prio{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700;text-transform:uppercase;}
+.prio-urgente{background:#FEE2E2;color:#991B1B;}
+.prio-alta{background:#FEF3C7;color:#92400E;}
+.prio-media{background:#EFF6FF;color:#1E40AF;}
+.prio-baixa{background:#F3F4F6;color:#374151;}
+.prog-chk{height:5px;background:var(--bg2);border-radius:3px;overflow:hidden;margin:6px 0 4px;}
+.prog-chk-fill{height:100%;border-radius:3px;background:var(--teal);transition:width .3s;}
+.kc-bottom{display:flex;align-items:center;justify-content:space-between;margin-top:8px;padding-top:8px;border-top:1px solid var(--border);}
+
+/* ── VISIT CARDS ── */
+.vgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;}
+.vc{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:16px;box-shadow:var(--shadow);}
+.vc-name{font-size:14px;font-weight:700;color:var(--navy);}
+
+/* ── FU ROWS ── */
+.fu-row{display:flex;align-items:center;gap:12px;padding:11px 18px;border-bottom:1px solid var(--border);transition:background .1s;}
+.fu-row:hover{background:#FAFBFC;}
+.fu-row:last-child{border-bottom:none;}
+.fu-step{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;}
+.fs-done{background:var(--teal-bg);color:#065F46;}
+.fs-due{background:var(--red-bg);color:var(--red-dark);}
+.fs-fut{background:var(--bg2);color:var(--text2);}
+
+/* ── MODAL ── */
+.overlay{display:none;position:fixed;inset:0;background:rgba(11,22,41,.55);backdrop-filter:blur(4px);z-index:300;align-items:center;justify-content:center;}
+.overlay.open{display:flex;animation:ovFade .2s ease;}
+@keyframes ovFade{from{opacity:0;}to{opacity:1;}}
+.modal{background:var(--white);border-radius:16px;width:540px;max-width:96vw;max-height:92vh;overflow-y:auto;display:flex;flex-direction:column;box-shadow:var(--shadow-lg);animation:modalUp .2s ease;}
+@keyframes modalUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+.mh{padding:20px 24px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;}
+.mt{font-size:16px;font-weight:700;color:var(--navy);}
+.mx{background:var(--bg);border:1px solid var(--border);border-radius:8px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;color:var(--text2);transition:all .15s;line-height:1;}
+.mx:hover{background:var(--bg2);}
+.mb{padding:20px 24px;flex:1;}
+.mf{padding:12px 24px 20px;display:flex;justify-content:flex-end;gap:8px;border-top:1px solid var(--border);flex-shrink:0;}
+.fg{margin-bottom:14px;}
+.fl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text2);margin-bottom:5px;display:block;}
+.fi-m{width:100%;padding:9px 12px;border:1px solid var(--border2);border-radius:8px;font-size:13px;color:var(--text);outline:none;font-family:var(--font);}
+.fi-m:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(22,163,122,.1);}
+.f2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+textarea.fi-m{resize:vertical;min-height:72px;}
+
+/* ── AI PANEL ── */
+.ai-panel{background:var(--navy2);border-radius:var(--r);padding:20px;margin-bottom:14px;}
+.ai-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;}
+.ai-icon{width:40px;height:40px;border-radius:11px;background:linear-gradient(135deg,#6366f1,#8B5CF6);display:flex;align-items:center;justify-content:center;font-size:20px;}
+.ai-body{background:rgba(255,255,255,.06);border-radius:10px;padding:16px;font-size:13px;line-height:1.75;color:rgba(255,255,255,.85);}
+.ai-body h4{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:#52C9A0;margin:14px 0 6px;font-weight:700;}
+.ai-body h4:first-child{margin-top:0;}
+.ai-body ul{padding-left:16px;}
+.ai-body li{margin-bottom:4px;}
+.ai-dot{width:7px;height:7px;border-radius:50%;background:#52C9A0;animation:ld 1.2s ease infinite;display:inline-block;}
+.ai-dot:nth-child(2){animation-delay:.2s;}.ai-dot:nth-child(3){animation-delay:.4s;}
+@keyframes ld{0%,80%,100%{opacity:.25;transform:scale(.8);}40%{opacity:1;transform:scale(1);}}
+
+/* ── STAT MINI ── */
+.stat-mini{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px;}
+.sm{background:var(--bg);border-radius:8px;padding:12px 14px;text-align:center;border:1px solid var(--border);}
+.sm-n{font-size:22px;font-weight:800;color:var(--navy);letter-spacing:-.03em;}
+.sm-l{font-size:11px;color:var(--text3);margin-top:2px;font-weight:500;}
+
+/* ── UTILS ── */
+.two{display:grid;grid-template-columns:1.8fr 1fr;gap:16px;}
+.av{border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:5px;}
+.dg{background:var(--teal);}.da{background:var(--amber);}.dr{background:var(--red);}
+.empty{text-align:center;padding:48px 20px;color:var(--text3);}
+.loading-row{text-align:center;padding:32px;color:var(--text3);font-size:13px;}
+.hbar{height:6px;border-radius:3px;background:var(--bg2);overflow:hidden;}
+.hf{height:100%;border-radius:3px;}
+.hg{background:var(--teal);}.ham{background:var(--amber);}.hrd{background:var(--red);}
+
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+
+@media(max-width:768px){
+  .sidebar{display:none;}
+  .kpi-grid,.stat-mini{grid-template-columns:repeat(2,1fr);}
+  .f2{grid-template-columns:1fr;}
+  .two{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ LOGIN ═══ -->
+<div id="login-screen" style="display:none;">
+  <div class="login-wrap">
+    <div class="login-box">
+      <div class="login-logo">
+        <div class="login-ico">SS</div>
+        <div>
+          <div class="login-brand">Santos Solução</div>
+          <div class="login-sub">CRM · Análises Clínicas</div>
+        </div>
+      </div>
+      <div id="login-mode">
+        <div class="login-title">Entrar na conta</div>
+        <div class="login-desc">Acesse com seu e-mail e senha cadastrados.</div>
+        <div class="login-err" id="login-err"></div>
+        <div class="fg"><label class="fl">E-mail</label><input class="fi" type="email" id="l-email" placeholder="vendedor@santossolucao.com.br" autocomplete="email"></div>
+        <div class="fg"><label class="fl">Senha</label><input class="fi" type="password" id="l-senha" placeholder="••••••••" autocomplete="current-password"></div>
+        <button class="btn-login" id="btn-entrar" onclick="entrar()">Entrar</button>
+        <div class="login-toggle">Não tem conta? <a onclick="toggleMode('register')">Criar conta</a></div>
+      </div>
+      <div id="register-mode" style="display:none;">
+        <div class="login-title">Criar conta</div>
+        <div class="login-desc">Preencha os dados para acessar o CRM.</div>
+        <div class="login-err" id="reg-err"></div>
+        <div class="fg"><label class="fl">Nome completo</label><input class="fi" type="text" id="r-nome" placeholder="Ana Santos"></div>
+        <div class="fg"><label class="fl">E-mail</label><input class="fi" type="email" id="r-email" placeholder="vendedor@santossolucao.com.br"></div>
+        <div class="fg"><label class="fl">Senha</label><input class="fi" type="password" id="r-senha" placeholder="Mínimo 8 caracteres"></div>
+        <button class="btn-login" id="btn-registrar" onclick="registrar()">Criar conta</button>
+        <div class="login-toggle">Já tem conta? <a onclick="toggleMode('login')">Entrar</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ APP ═══ -->
+<div id="app-screen" style="display:none;">
+<div class="shell">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="b-ico">SS</div>
+      <div><div class="b-name">Santos Solução</div><div class="b-sub">CRM · Análises Clínicas</div></div>
+    </div>
+    <div style="flex:1;padding:6px 0 4px;">
+      <div class="nav-sec">Principal</div>
+      <div class="ni active" data-p="dashboard" onclick="nav(this,'dashboard')"><span class="ni-ico">⬡</span>Dashboard</div>
+      <div class="ni" data-p="clientes" onclick="nav(this,'clientes')"><span class="ni-ico">🏥</span>Clientes</div>
+      <div class="ni" data-p="negociacoes" onclick="nav(this,'negociacoes')"><span class="ni-ico">⬢</span>Negociações</div>
+      <div class="ni" data-p="visitas" onclick="nav(this,'visitas')"><span class="ni-ico">📅</span>Visitas <span class="ni-badge" id="nb-vis">0</span></div>
+      <div class="ni" data-p="posvenda" onclick="nav(this,'posvenda')"><span class="ni-ico">🔔</span>Pós-visita <span class="ni-badge" id="nb-pv">0</span></div>
+      <div class="nav-sec">Análise</div>
+      <div class="ni" data-p="relatorios" onclick="nav(this,'relatorios')"><span class="ni-ico">📋</span>Relatórios</div>
+    </div>
+    <div class="sb-footer">
+      <div class="sb-user">
+        <div class="sb-av" id="sb-av" style="background:var(--teal);">SS</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:13px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" id="sb-name">Carregando...</div>
+          <div style="font-size:11px;color:rgba(255,255,255,.35);" id="sb-role">—</div>
+        </div>
+      </div>
+      <button class="sb-logout" onclick="sair()">← Sair</button>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <span class="pt" id="pt">Dashboard</span>
+      <div class="tb-r">
+        <span class="role-badge" id="role-badge">Vendedor</span>
+        <button class="btn btn-p" onclick="openAdd()">+ Novo</button>
+      </div>
+    </div>
+
+    <div class="content">
+      <!-- DASHBOARD -->
+      <div class="page active" id="page-dashboard">
+        <div class="kpi-grid" id="kpi"></div>
+        <div class="two">
+          <div>
+            <div class="card"><div class="ch"><span class="ct2">Negociações em andamento</span><span id="neg-sum" class="ct" style="font-size:13px;font-weight:700;"></span></div><div id="dash-negs"></div></div>
+            <div class="card"><div class="ch"><span class="ct2">Próximas visitas</span></div><div id="dash-vis"></div></div>
+          </div>
+          <div>
+            <div class="card" style="margin-bottom:14px;"><div class="ch"><span class="ct2">Saúde da carteira</span></div><div class="cb2" id="health-dash"></div></div>
+            <div class="card"><div class="ch"><span class="ct2">Follow-ups pendentes</span></div><div id="dash-pv"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CLIENTES -->
+      <div class="page" id="page-clientes">
+        <div class="card">
+          <div class="ch">
+            <span class="ct2">Clientes parceiros</span>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <select class="srch" id="f-seg-filter" onchange="renderClientes()" style="width:160px;">
+                <option value="">Todos os segmentos</option><option>Hospital</option><option>Clínica</option><option>Laboratório</option>
+              </select>
+              <input class="srch" placeholder="🔍 Buscar..." oninput="renderClientes(this.value)" style="width:180px;">
+            </div>
+          </div>
+          <div class="tw"><table><thead><tr><th>Cliente</th><th>Segmento</th><th>Responsável</th><th>Cidade</th><th>Status</th><th>Vendedor</th><th></th></tr></thead><tbody id="cli-body"></tbody></table></div>
+        </div>
+      </div>
+
+      <!-- NEGOCIAÇÕES -->
+      <div class="page" id="page-negociacoes">
+        <div class="card" style="overflow:visible;">
+          <div class="ch">
+            <span class="ct2">Pipeline — Equipamentos · Aluguéis · Comodatos</span>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <select class="srch" id="neg-tf" onchange="renderNeg()" style="width:170px;">
+                <option value="">Todos os tipos</option>
+                <option value="equipamento">🔬 Equipamento</option>
+                <option value="aluguel">📋 Aluguel</option>
+                <option value="comodato">🤝 Comodato</option>
+              </select>
+              <span id="neg-total" class="ct" style="font-size:13px;font-weight:700;"></span>
+            </div>
+          </div>
+          <div style="padding:16px 18px;"><div class="kanban" id="kanban"></div></div>
+        </div>
+      </div>
+
+      <!-- VISITAS -->
+      <div class="page" id="page-visitas">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px;">
+          <span style="font-size:14px;font-weight:700;color:var(--navy);">Agenda de visitas</span>
+          <select class="srch" id="vis-sf" onchange="renderVisitas()" style="width:160px;">
+            <option value="">Todas</option><option value="agendada">Agendadas</option><option value="realizada">Realizadas</option>
+          </select>
+        </div>
+        <div class="vgrid" id="vis-grid"></div>
+      </div>
+
+      <!-- PÓS-VISITA -->
+      <div class="page" id="page-posvenda">
+        <div class="card">
+          <div class="ch"><span class="ct2">Follow-ups & Pós-visita</span><span id="pv-cnt" style="font-size:12px;font-weight:700;color:var(--red);"></span></div>
+          <div id="pv-list"></div>
+        </div>
+      </div>
+
+      <!-- RELATÓRIOS -->
+      <div class="page" id="page-relatorios">
+        <div id="rep-out"></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- MODAL -->
+<div class="overlay" id="overlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal" id="modal">
+    <div class="mh"><span class="mt" id="m-title">Novo</span><button class="mx" onclick="closeModal()">×</button></div>
+    <div class="mb" id="m-body"></div>
+    <div class="mf" id="m-foot">
+      <button class="btn btn-g" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-p" onclick="saveM()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+// ══════════════════════════════════════════════════
+// CONFIGURAÇÃO — substitua com seus dados do Supabase
+// ══════════════════════════════════════════════════
+const SUPABASE_URL = 'https://fpodkawezhwlyjnqmsvo.supabase.co';   // ex: https://xyzabc.supabase.co
+const SUPABASE_KEY = 'sb_publishable_CUe-DcskXfSTvJ1Wtj0mXQ_3_c85N4b';           // chave anon pública do Supabase
+
+// ── Carrega Supabase via ESM (funciona em qualquer ambiente) ──
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+// ── Detecta se as credenciais foram configuradas ──
+const CONFIGURADO = !SUPABASE_URL.includes('COLE_AQUI') && !SUPABASE_KEY.includes('COLE_AQUI');
+const BRIEFING_FN = `${SUPABASE_URL}/functions/v1/briefing`;
+
+// ── Cria cliente Supabase (ou mock se não configurado) ──
+const sb = CONFIGURADO
+  ? createClient(SUPABASE_URL, SUPABASE_KEY)
+  : null;
+
+// ── Se não configurado, mostra tela de setup ──
+if (!CONFIGURADO) {
+  document.body.innerHTML = `
+    <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0B1629;font-family:-apple-system,sans-serif;padding:20px;">
+      <div style="background:#fff;border-radius:16px;padding:40px;max-width:520px;width:100%;">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:28px;">
+          <div style="width:42px;height:42px;border-radius:11px;background:linear-gradient(135deg,#16A37A,#5DCAA5);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:#fff;">SS</div>
+          <div><div style="font-size:15px;font-weight:700;color:#0B1629;">Santos Solução · CRM</div><div style="font-size:12px;color:#9CA3AF;margin-top:2px;">Configuração inicial</div></div>
+        </div>
+        <h2 style="font-size:20px;font-weight:800;color:#0B1629;margin-bottom:8px;letter-spacing:-.02em;">Configure o Supabase</h2>
+        <p style="font-size:13px;color:#4B5563;margin-bottom:24px;line-height:1.6;">Para usar o CRM, insira suas credenciais do Supabase. Elas ficam apenas no seu navegador.</p>
+        <div style="margin-bottom:14px;">
+          <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#6B7280;margin-bottom:5px;display:block;">Project URL</label>
+          <input id="cfg-url" style="width:100%;padding:10px 12px;border:1px solid #D0D5DD;border-radius:8px;font-size:13px;font-family:monospace;" placeholder="https://xyzabc.supabase.co" oninput="salvarCfg()">
+        </div>
+        <div style="margin-bottom:20px;">
+          <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#6B7280;margin-bottom:5px;display:block;">Anon Public Key</label>
+          <input id="cfg-key" style="width:100%;padding:10px 12px;border:1px solid #D0D5DD;border-radius:8px;font-size:13px;font-family:monospace;" placeholder="eyJhbGciOiJIUzI1NiIs..." oninput="salvarCfg()">
+        </div>
+        <button onclick="aplicarCfg()" style="width:100%;padding:12px;background:#16A37A;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;">Salvar e entrar no CRM</button>
+        <p style="font-size:12px;color:#9CA3AF;margin-top:16px;text-align:center;">Encontre esses dados em <strong>supabase.com → Project Settings → API</strong></p>
+        <div style="margin-top:16px;background:#F0F2F5;border-radius:8px;padding:14px;">
+          <div style="font-size:12px;font-weight:700;color:#374151;margin-bottom:6px;">Como obter as credenciais:</div>
+          <ol style="font-size:12px;color:#4B5563;padding-left:16px;line-height:1.8;">
+            <li>Acesse <a href="https://supabase.com" target="_blank" style="color:#16A37A;">supabase.com</a> e faça login</li>
+            <li>Clique no seu projeto Santos Solução</li>
+            <li>Vá em <strong>Project Settings → API</strong></li>
+            <li>Copie o <strong>Project URL</strong> e a <strong>anon public</strong> key</li>
+          </ol>
+        </div>
+      </div>
+    </div>`;
+
+  // Carrega valores salvos no localStorage
+  const saved = JSON.parse(localStorage.getItem('ss_cfg') || '{}');
+  if (saved.url) document.getElementById('cfg-url').value = saved.url;
+  if (saved.key) document.getElementById('cfg-key').value = saved.key;
+
+  window.salvarCfg = () => {
+    localStorage.setItem('ss_cfg', JSON.stringify({
+      url: document.getElementById('cfg-url').value.trim(),
+      key: document.getElementById('cfg-key').value.trim()
+    }));
+  };
+  window.aplicarCfg = () => {
+    const url = document.getElementById('cfg-url').value.trim();
+    const key = document.getElementById('cfg-key').value.trim();
+    if (!url.startsWith('https://') || !key.startsWith('eyJ')) {
+      alert('URL ou chave inválida. Verifique os dados e tente novamente.');
+      return;
+    }
+    localStorage.setItem('ss_cfg', JSON.stringify({ url, key }));
+    location.reload();
+  };
+
+  // Tenta carregar credenciais salvas anteriormente
+  const cfg = JSON.parse(localStorage.getItem('ss_cfg') || '{}');
+  if (cfg.url && cfg.key && cfg.url.startsWith('https://') && cfg.key.startsWith('eyJ')) {
+    // Credenciais salvas — redireciona com parâmetro para forçar reload correto
+    // O usuário precisa editar o HTML com as credenciais corretas para produção
+  }
+} else {
+
+// ══════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════
+let USER = null, PERFIL = null;
+let DATA = { clientes:[], negociacoes:[], checklist:[], visitas:[], followups:[] };
+let curPage = 'dashboard';
+
+const etapas = ['Prospecção','Visita Agendada','Proposta Enviada','Negociação','Ganho ✓','Perdido ✗'];
+const ptitles = {dashboard:'Dashboard',clientes:'Clientes',negociacoes:'Negociações',visitas:'Visitas',posvenda:'Pós-visita & Follow-up',relatorios:'Relatórios'};
+const pages = ['dashboard','clientes','negociacoes','visitas','posvenda','relatorios'];
+
+// ══════════════════════════════════════════════════
+// AUTH
+// ══════════════════════════════════════════════════
+async function initAuth() {
+  const { data: { session } } = await sb.auth.getSession();
+  if (session) {
+    await setupUser(session.user);
+  } else {
+    showLogin();
+  }
+  sb.auth.onAuthStateChange(async (_e, session) => {
+    if (session) await setupUser(session.user);
+    else showLogin();
+  });
+}
+
+async function setupUser(user) {
+  USER = user;
+  const { data: perfil } = await sb.from('perfis').select('*').eq('id', user.id).single();
+  PERFIL = perfil;
+  document.getElementById('sb-av').textContent = perfil?.iniciais || user.email[0].toUpperCase();
+  document.getElementById('sb-name').textContent = perfil?.nome || user.email;
+  document.getElementById('sb-role').textContent = perfil?.role === 'gestor' ? 'Gestor' : 'Vendedor(a)';
+  document.getElementById('role-badge').textContent = perfil?.role === 'gestor' ? 'Gestor' : 'Vendedor';
+  showApp();
+  await loadAllData();
+  renderDash();
+}
+
+function showLogin() {
+  document.getElementById('login-screen').style.display = 'block';
+  document.getElementById('app-screen').style.display = 'none';
+}
+function showApp() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app-screen').style.display = 'block';
+}
+function toggleMode(m) {
+  document.getElementById('login-mode').style.display = m === 'login' ? 'block' : 'none';
+  document.getElementById('register-mode').style.display = m === 'register' ? 'block' : 'none';
+}
+async function entrar() {
+  const btn = document.getElementById('btn-entrar');
+  btn.disabled = true; btn.textContent = 'Entrando...';
+  const err = document.getElementById('login-err');
+  err.style.display = 'none';
+  const { error } = await sb.auth.signInWithPassword({
+    email: document.getElementById('l-email').value.trim(),
+    password: document.getElementById('l-senha').value,
+  });
+  if (error) { err.textContent = traduzErro(error.message); err.style.display = 'block'; }
+  btn.disabled = false; btn.textContent = 'Entrar';
+}
+async function registrar() {
+  const btn = document.getElementById('btn-registrar');
+  btn.disabled = true; btn.textContent = 'Criando conta...';
+  const err = document.getElementById('reg-err');
+  err.style.display = 'none';
+  const nome = document.getElementById('r-nome').value.trim();
+  const { error } = await sb.auth.signUp({
+    email: document.getElementById('r-email').value.trim(),
+    password: document.getElementById('r-senha').value,
+    options: { data: { nome } }
+  });
+  if (error) { err.textContent = traduzErro(error.message); err.style.display = 'block'; }
+  else { err.style.color = 'var(--teal)'; err.textContent = 'Conta criada! Verifique seu e-mail.'; err.style.display = 'block'; }
+  btn.disabled = false; btn.textContent = 'Criar conta';
+}
+async function sair() {
+  await sb.auth.signOut();
+  DATA = { clientes:[], negociacoes:[], checklist:[], visitas:[], followups:[] };
+}
+function traduzErro(msg) {
+  const m = { 'Invalid login credentials': 'E-mail ou senha incorretos.', 'Email not confirmed': 'Confirme seu e-mail antes de entrar.', 'User already registered': 'E-mail já cadastrado.' };
+  return m[msg] || msg;
+}
+document.addEventListener('keydown', e => { if (e.key === 'Enter') { if (document.getElementById('l-senha') === document.activeElement) entrar(); if (document.getElementById('r-senha') === document.activeElement) registrar(); }});
+
+// ══════════════════════════════════════════════════
+// DATA LOADING
+// ══════════════════════════════════════════════════
+async function loadAllData() {
+  const isGestor = PERFIL?.role === 'gestor';
+  const uid = USER?.id;
+
+  const [cliRes, negRes, chkRes, visRes, fuRes] = await Promise.all([
+    sb.from('clientes').select('*').order('nome'),
+    sb.from('negociacoes').select('*').order('criado_em', { ascending: false }),
+    sb.from('checklist_itens').select('*').order('ordem'),
+    sb.from('visitas').select('*').order('data', { ascending: false }),
+    sb.from('followups').select('*').order('data_prevista'),
+  ]);
+
+  DATA.clientes   = cliRes.data  || [];
+  DATA.negociacoes= negRes.data  || [];
+  DATA.checklist  = chkRes.data  || [];
+  DATA.visitas    = visRes.data  || [];
+  DATA.followups  = fuRes.data   || [];
+
+  updateBadges();
+}
+
+// ══════════════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════════════
+function cliName(id) { const c = DATA.clientes.find(x => x.id === id); return c ? c.nome : '—'; }
+function cliSeg(id) { const c = DATA.clientes.find(x => x.id === id); return c ? c.segmento : ''; }
+function fmtD(d) { if (!d) return '—'; const p = d.split('-'); return `${p[2]}/${p[1]}/${p[0]}`; }
+function fmtV(v) { return 'R$ ' + Number(v).toLocaleString('pt-BR', { minimumFractionDigits: 2 }); }
+function dSince(d) { if (!d) return 9999; return Math.floor((new Date() - new Date(d)) / 864e5); }
+function dUntil(d) { if (!d) return null; return Math.floor((new Date(d) - new Date()) / 864e5); }
+function segTag(s) { const m = { Hospital:'tb2', Clínica:'tv', Laboratório:'tg' }; return `<span class="tag ${m[s]||'tgr'}">${s}</span>`; }
+function stag(s) { const m = { ativo:['tg','Ativo'], atencao:['ta','Atenção'], risco:['tr2','Em risco'], inativo:['tgr','Inativo'] }; const r = m[s]||m.inativo; return `<span class="tag ${r[0]}">${r[1]}</span>`; }
+function tipoTag(t) { const m = { equipamento:['tb2','🔬 Equip.'], aluguel:['tv','📋 Aluguel'], comodato:['ta','🤝 Comodato'] }; const r = m[t]||['tgr',t]; return `<span class="tag ${r[0]}">${r[1]}</span>`; }
+function prioTag(p) { const ico = { urgente:'🔴', alta:'🟠', media:'🔵', baixa:'⚪' }; return `<span class="prio prio-${p}">${ico[p]||''} ${p}</span>`; }
+function dateLabel(n) {
+  const d = dUntil(n.data_prev); if (d === null) return '';
+  if (n.etapa >= 4) return `<span style="font-size:10px;background:var(--teal-bg);color:#065F46;padding:2px 6px;border-radius:4px;font-weight:600;">✓ ${fmtD(n.data_prev)}</span>`;
+  if (d < 0) return `<span style="font-size:10px;background:var(--red-bg);color:var(--red-dark);padding:2px 6px;border-radius:4px;font-weight:600;">⚠ Vencida</span>`;
+  if (d <= 3) return `<span style="font-size:10px;background:#FEF3C7;color:#92400E;padding:2px 6px;border-radius:4px;font-weight:600;">⏰ ${fmtD(n.data_prev)}</span>`;
+  return `<span style="font-size:10px;background:var(--bg2);color:var(--text2);padding:2px 6px;border-radius:4px;">📅 ${fmtD(n.data_prev)}</span>`;
+}
+function lastVis(cli_id) { return DATA.visitas.filter(v => v.cliente_id === cli_id && v.status === 'realizada').sort((a,b) => b.data.localeCompare(a.data))[0] || null; }
+function hColor(cli_id) { const lv = lastVis(cli_id); const d = lv ? dSince(lv.data) : 9999; return d < 45 ? 'green' : d < 90 ? 'amber' : 'red'; }
+function hScore(cli_id) { const lv = lastVis(cli_id); const d = lv ? dSince(lv.data) : 9999; return Math.max(0, Math.min(100, Math.round(100 - d * 1.1))); }
+function chkProg(negId) { const items = DATA.checklist.filter(c => c.negociacao_id === negId); if (!items.length) return null; const done = items.filter(c => c.feito).length; return { done, total: items.length, pct: Math.round(done / items.length * 100) }; }
+function cliOpts(sel = '') { return DATA.clientes.map(c => `<option value="${c.id}" ${sel === c.id ? 'selected' : ''}>${c.nome} (${c.segmento})</option>`).join(''); }
+function updateBadges() {
+  const today = new Date().toISOString().slice(0, 10);
+  document.getElementById('nb-vis').textContent = DATA.visitas.filter(v => v.status === 'agendada').length;
+  document.getElementById('nb-pv').textContent = DATA.followups.filter(f => f.status === 'pendente' && f.data_prevista <= today).length;
+}
+
+// ══════════════════════════════════════════════════
+// NAV
+// ══════════════════════════════════════════════════
+function nav(el, p) {
+  curPage = p;
+  document.querySelectorAll('.ni').forEach(n => n.classList.remove('active'));
+  el.classList.add('active');
+  pages.forEach(x => document.getElementById('page-' + x).classList.remove('active'));
+  document.getElementById('page-' + p).classList.add('active');
+  document.getElementById('pt').textContent = ptitles[p];
+  renderPage(p);
+}
+function renderPage(p) {
+  if (p === 'dashboard') renderDash();
+  else if (p === 'clientes') renderClientes();
+  else if (p === 'negociacoes') renderNeg();
+  else if (p === 'visitas') renderVisitas();
+  else if (p === 'posvenda') renderPosvenda();
+  else if (p === 'relatorios') renderRelatorios();
+}
+
+// ══════════════════════════════════════════════════
+// DASHBOARD
+// ══════════════════════════════════════════════════
+function renderDash() {
+  const negs = DATA.negociacoes.filter(n => n.etapa < 4);
+  const valEq = negs.filter(n => n.tipo === 'equipamento').reduce((s, n) => s + Number(n.valor), 0);
+  const valAlug = negs.filter(n => n.tipo === 'aluguel').reduce((s, n) => s + Number(n.valor), 0);
+  const visAg = DATA.visitas.filter(v => v.status === 'agendada').length;
+  const today = new Date().toISOString().slice(0, 10);
+  const pvH = DATA.followups.filter(f => f.status === 'pendente' && f.data_prevista <= today).length;
+
+  document.getElementById('kpi').innerHTML = `
+    <div class="kpi"><div class="kpi-icon ki-teal">🎯</div><div class="kpi-label">Negociações abertas</div><div class="kpi-value">${negs.length}</div><div class="kpi-sub ct">${DATA.negociacoes.filter(n => n.etapa === 4).length} fechadas</div></div>
+    <div class="kpi"><div class="kpi-icon ki-blue">🔬</div><div class="kpi-label">Valor em equipamentos</div><div class="kpi-value sm cb">${fmtV(valEq)}</div><div class="kpi-sub cb">em negociação</div></div>
+    <div class="kpi"><div class="kpi-icon ki-violet">📋</div><div class="kpi-label">Valor em aluguéis</div><div class="kpi-value sm" style="color:var(--violet);">${fmtV(valAlug)}</div><div class="kpi-sub ca">contratos/ano</div></div>
+    <div class="kpi"><div class="kpi-icon ki-amber">📅</div><div class="kpi-label">Visitas agendadas</div><div class="kpi-value">${visAg}</div><div class="kpi-sub ${pvH > 0 ? 'cr' : 'ct'}">${pvH} follow-up${pvH !== 1 ? 's' : ''} hoje</div></div>`;
+
+  document.getElementById('neg-sum').textContent = fmtV(valEq + valAlug) + ' em aberto';
+  document.getElementById('dash-negs').innerHTML = negs.slice(0, 6).map(n => `
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 18px;border-bottom:1px solid var(--border);gap:12px;">
+      <div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:600;color:var(--navy);">${cliName(n.cliente_id)}</div><div style="display:flex;gap:6px;margin-top:3px;">${tipoTag(n.tipo)}<span style="font-size:11px;color:var(--text3);">${etapas[n.etapa]}</span></div></div>
+      <div style="text-align:right;flex-shrink:0;"><div style="font-size:13px;font-weight:700;color:var(--teal);">${n.valor > 0 ? fmtV(n.valor) : 'Comodato'}</div></div>
+    </div>`).join('') || '<div class="empty" style="padding:24px;">Sem negociações abertas</div>';
+
+  const visAgs = DATA.visitas.filter(v => v.status === 'agendada').sort((a, b) => a.data.localeCompare(b.data));
+  document.getElementById('dash-vis').innerHTML = visAgs.slice(0, 4).map(v => `
+    <div style="display:flex;align-items:center;gap:12px;padding:11px 18px;border-bottom:1px solid var(--border);">
+      <div style="width:32px;height:32px;border-radius:8px;background:var(--teal-bg);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;">📅</div>
+      <div style="flex:1;"><div style="font-size:13px;font-weight:600;color:var(--navy);">${cliName(v.cliente_id)}</div><div style="font-size:11px;color:var(--text3);margin-top:2px;">${fmtD(v.data)} às ${v.hora?.slice(0,5)||''}</div></div>
+    </div>`).join('') || '<div class="empty" style="padding:20px;">Sem visitas agendadas</div>';
+
+  const clis = DATA.clientes;
+  const g = clis.filter(c => hColor(c.id) === 'green').length;
+  const am = clis.filter(c => hColor(c.id) === 'amber').length;
+  const re = clis.filter(c => hColor(c.id) === 'red').length;
+  const tot = clis.length || 1;
+  document.getElementById('health-dash').innerHTML = `
+    <div style="display:flex;justify-content:space-between;margin-bottom:9px;"><span style="font-size:13px;font-weight:500;"><span class="dot dg"></span>Em dia</span><strong style="color:var(--teal);">${g}</strong></div>
+    <div style="display:flex;justify-content:space-between;margin-bottom:9px;"><span style="font-size:13px;font-weight:500;"><span class="dot da"></span>Atenção</span><strong style="color:var(--amber);">${am}</strong></div>
+    <div style="display:flex;justify-content:space-between;margin-bottom:13px;"><span style="font-size:13px;font-weight:500;"><span class="dot dr"></span>Sem visita</span><strong style="color:var(--red);">${re}</strong></div>
+    <div style="height:10px;border-radius:5px;overflow:hidden;display:flex;gap:2px;">
+      <div style="flex:${g};background:var(--teal);border-radius:4px;min-width:${g?4:0}px;"></div>
+      <div style="flex:${am};background:var(--amber);border-radius:4px;min-width:${am?4:0}px;"></div>
+      <div style="flex:${re};background:var(--red);border-radius:4px;min-width:${re?4:0}px;"></div>
+    </div><p style="font-size:11px;color:var(--text3);margin-top:8px;">${tot} clientes</p>`;
+
+  const pvHoje = DATA.followups.filter(f => f.status === 'pendente' && f.data_prevista <= today);
+  document.getElementById('dash-pv').innerHTML = pvHoje.slice(0, 4).map(f => `
+    <div class="fu-row"><div class="fu-step fs-due" style="font-size:9px;">${f.tipo?.slice(0,5)||'FU'}</div>
+      <div style="flex:1;"><div style="font-size:13px;font-weight:600;color:var(--navy);">${cliName(f.cliente_id)}</div><div style="font-size:11px;color:var(--text3);margin-top:2px;">${f.obs||''}</div></div>
+      <button class="btn btn-g btn-sm" onclick="markFu('${f.id}')">✓</button></div>`).join('') || '<div class="empty" style="padding:16px;">🎉 Nenhum pendente</div>';
+}
+
+// ══════════════════════════════════════════════════
+// CLIENTES
+// ══════════════════════════════════════════════════
+function renderClientes(q = '') {
+  const seg = document.getElementById('f-seg-filter').value;
+  let data = DATA.clientes;
+  if (q) data = data.filter(c => c.nome.toLowerCase().includes(q.toLowerCase()) || (c.cidade||'').toLowerCase().includes(q.toLowerCase()));
+  if (seg) data = data.filter(c => c.segmento === seg);
+  document.getElementById('cli-body').innerHTML = data.map(c => {
+    const lv = lastVis(c.id); const score = hScore(c.id); const hc = hColor(c.id);
+    const bc = hc === 'green' ? 'var(--teal)' : hc === 'amber' ? 'var(--amber)' : 'var(--red)';
+    return `<tr>
+      <td><div style="font-weight:700;">${c.nome}</div><div style="font-size:11px;color:var(--text3);">${c.email||''}</div></td>
+      <td>${segTag(c.segmento)}</td>
+      <td style="font-size:13px;">${c.responsavel||'—'}</td>
+      <td style="font-size:13px;color:var(--text2);">${c.cidade||''}${c.estado?'/'+c.estado:''}</td>
+      <td>${stag(c.status)}</td>
+      <td><div style="display:flex;align-items:center;gap:7px;"><div style="width:60px;"><div class="hbar"><div class="hf" style="width:${score}%;background:${bc};"></div></div></div><span style="font-size:11px;font-weight:700;color:${bc};">${score}%</span></div></td>
+      <td><div class="btn btn-g btn-sm" onclick="openEditCli('${c.id}')">Editar</div></td>
+    </tr>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════
+// NEGOCIAÇÕES
+// ══════════════════════════════════════════════════
+function renderNeg() {
+  const tf = document.getElementById('neg-tf').value;
+  let negs = DATA.negociacoes;
+  if (tf) negs = negs.filter(n => n.tipo === tf);
+  const openVal = negs.filter(n => n.etapa < 4 && n.valor > 0).reduce((s, n) => s + Number(n.valor), 0);
+  document.getElementById('neg-total').textContent = openVal > 0 ? fmtV(openVal) + ' em aberto' : '';
+  document.getElementById('kanban').innerHTML = etapas.map((e, i) => {
+    const cards = negs.filter(n => n.etapa === i);
+    const accent = i === 4 ? 'var(--teal)' : i === 5 ? 'var(--red)' : 'var(--text3)';
+    return `<div class="kcol">
+      <div class="kh" style="color:${accent};">${e.replace(' ✓','').replace(' ✗','')} <span class="kcnt">${cards.length}</span></div>
+      ${cards.map(n => {
+        const prog = chkProg(n.id);
+        return `<div class="kc" onclick="openNegDetail('${n.id}')">
+          <div class="kc-name">${cliName(n.cliente_id)}</div>
+          <div style="margin:4px 0;">${tipoTag(n.tipo)} ${prioTag(n.prioridade||'media')}</div>
+          <div class="kc-val">${n.valor > 0 ? fmtV(n.valor) : 'Comodato'}</div>
+          <div class="kc-meta">${(n.titulo||'').slice(0,38)}${(n.titulo||'').length>38?'…':''}</div>
+          <div style="margin-top:5px;">${dateLabel(n)}</div>
+          ${prog ? `<div style="margin-top:6px;"><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-bottom:3px;"><span>Checklist</span><span>${prog.done}/${prog.total}</span></div><div class="prog-chk"><div class="prog-chk-fill" style="width:${prog.pct}%;background:${prog.pct===100?'var(--teal)':'var(--blue)'}"></div></div></div>` : ''}
+          ${n.obs ? `<div style="font-size:10px;color:var(--amber);margin-top:5px;font-weight:600;">⚠ ${(n.obs||'').slice(0,40)}</div>` : ''}
+        </div>`;
+      }).join('')}
+      <div class="kadd" onclick="openAddNeg(${i})">+ Adicionar</div>
+    </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════
+// VISITAS
+// ══════════════════════════════════════════════════
+function renderVisitas() {
+  const sf = document.getElementById('vis-sf').value;
+  let vis = DATA.visitas;
+  if (sf) vis = vis.filter(v => v.status === sf);
+  vis.sort((a, b) => b.data.localeCompare(a.data));
+  const stMap = { agendada:['ta','Agendada'], realizada:['tg','Realizada'], cancelada:['tr2','Cancelada'] };
+  document.getElementById('vis-grid').innerHTML = vis.map(v => {
+    const st = stMap[v.status] || stMap.agendada;
+    const hasHist = DATA.visitas.filter(x => x.cliente_id === v.cliente_id && x.status === 'realizada').length > 0;
+    return `<div class="vc">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+        <div><div class="vc-name">${cliName(v.cliente_id)}</div><div style="margin-top:4px;">${segTag(cliSeg(v.cliente_id))}</div></div>
+        <span class="tag ${st[0]}">${st[1]}</span>
+      </div>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:8px;font-weight:500;">📅 ${fmtD(v.data)} às ${v.hora?.slice(0,5)||''}</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.55;margin-bottom:10px;">${v.objetivo||''}</div>
+      ${v.notas ? `<div style="background:var(--teal-bg);border-left:3px solid var(--teal);padding:8px 10px;border-radius:0 6px 6px 0;font-size:12px;color:#065F46;margin-bottom:8px;">📝 ${v.notas}</div>` : ''}
+      ${v.prox_passo ? `<div style="background:var(--amber-bg);border-left:3px solid var(--amber);padding:8px 10px;border-radius:0 6px 6px 0;font-size:12px;color:var(--amber-dark);margin-bottom:8px;">→ ${v.prox_passo}</div>` : ''}
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;padding-top:10px;border-top:1px solid var(--border);">
+        <span style="font-size:12px;color:var(--text3);">ID: ${v.id?.slice(0,8)||'—'}</span>
+        <div style="display:flex;gap:6px;">
+          ${v.status === 'agendada' && hasHist ? `<button class="btn btn-ai btn-sm" onclick="gerarBriefing('${v.id}')">✨ Briefing IA</button>` : ''}
+          ${v.status === 'agendada' ? `<button class="btn btn-p btn-sm" onclick="registrarVis('${v.id}')">Registrar</button>` : ''}
+          <button class="btn btn-g btn-sm" onclick="openEditVis('${v.id}')">Editar</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('') || '<div class="empty" style="grid-column:1/-1;"><div style="font-size:36px;">📅</div><p>Sem visitas</p></div>';
+}
+
+// ══════════════════════════════════════════════════
+// PÓS-VISITA
+// ══════════════════════════════════════════════════
+function renderPosvenda() {
+  const today = new Date().toISOString().slice(0, 10);
+  const fus = DATA.followups.sort((a, b) => {
+    if (a.status === 'feito' && b.status !== 'feito') return 1;
+    if (b.status === 'feito' && a.status !== 'feito') return -1;
+    return a.data_prevista.localeCompare(b.data_prevista);
+  });
+  const pend = fus.filter(f => f.status === 'pendente' && f.data_prevista <= today).length;
+  document.getElementById('pv-cnt').textContent = pend > 0 ? pend + ' pendente' + (pend > 1 ? 's' : '') + ' hoje' : '';
+  document.getElementById('pv-list').innerHTML = fus.map(f => {
+    const done = f.status === 'feito';
+    const over = !done && f.data_prevista <= today;
+    const cls = done ? 'fs-done' : over ? 'fs-due' : 'fs-fut';
+    const dc = done ? 'ct' : over ? 'cr' : 'cb';
+    return `<div class="fu-row">
+      <div class="fu-step ${cls}" style="font-size:9px;">${(f.tipo||'FU').slice(0,6)}</div>
+      <div style="flex:1;"><div style="font-size:13px;font-weight:600;color:var(--navy);">${cliName(f.cliente_id)}</div><div style="font-size:11px;color:var(--text3);margin-top:2px;">${f.obs||''}</div></div>
+      <div style="text-align:right;margin-right:8px;flex-shrink:0;"><div style="font-size:11px;font-weight:600;" class="${dc}">${fmtD(f.data_prevista)}</div></div>
+      ${!done ? `<button class="btn btn-g btn-sm" onclick="markFu('${f.id}')">✓ Feito</button>` : '<span style="color:var(--teal);font-size:18px;">✓</span>'}
+    </div>`;
+  }).join('');
+}
+async function markFu(id) {
+  await sb.from('followups').update({ status: 'feito' }).eq('id', id);
+  const f = DATA.followups.find(x => x.id === id);
+  if (f) f.status = 'feito';
+  renderPosvenda(); renderDash(); updateBadges();
+}
+
+// ══════════════════════════════════════════════════
+// RELATÓRIOS
+// ══════════════════════════════════════════════════
+function renderRelatorios() {
+  const ms = new Date().toISOString().slice(0, 7);
+  const visM = DATA.visitas.filter(v => v.data?.startsWith(ms));
+  const negs = DATA.negociacoes;
+  const pipeEq = negs.filter(n => n.etapa < 4 && n.tipo === 'equipamento').reduce((s, n) => s + Number(n.valor), 0);
+  const pipeAlug = negs.filter(n => n.etapa < 4 && n.tipo === 'aluguel').reduce((s, n) => s + Number(n.valor), 0);
+  document.getElementById('rep-out').innerHTML = `
+    <div style="font-size:17px;font-weight:800;color:var(--navy);letter-spacing:-.02em;margin-bottom:18px;">Relatório geral — ${new Date().toLocaleString('pt-BR',{month:'long',year:'numeric'})}</div>
+    <div class="stat-mini">
+      <div class="sm"><div class="sm-n">${visM.filter(v=>v.status==='realizada').length}</div><div class="sm-l">Visitas realizadas</div></div>
+      <div class="sm"><div class="sm-n">${visM.filter(v=>v.status==='agendada').length}</div><div class="sm-l">Visitas agendadas</div></div>
+      <div class="sm"><div class="sm-n">${negs.filter(n=>n.etapa<4).length}</div><div class="sm-l">Negociações abertas</div></div>
+      <div class="sm"><div class="sm-n">${negs.filter(n=>n.etapa===4).length}</div><div class="sm-l">Negociações fechadas</div></div>
+    </div>
+    <div class="card">
+      <div class="ch"><span class="ct2">Pipeline por tipo</span></div>
+      <div class="cb2">
+        <div style="display:flex;justify-content:space-between;margin-bottom:8px;"><span>${tipoTag('equipamento')}</span><strong style="color:var(--blue);">${fmtV(pipeEq)}</strong></div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:8px;"><span>${tipoTag('aluguel')}</span><strong style="color:var(--violet);">${fmtV(pipeAlug)}</strong></div>
+        <div style="display:flex;justify-content:space-between;"><span>${tipoTag('comodato')}</span><strong style="color:var(--amber);">${negs.filter(n=>n.etapa<4&&n.tipo==='comodato').length} em andamento</strong></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ch"><span class="ct2">Saúde da carteira de clientes</span></div>
+      <div class="tw"><table><thead><tr><th>Cliente</th><th>Segmento</th><th>Saúde</th><th>Última visita</th></tr></thead>
+        <tbody>${DATA.clientes.map(c=>{
+          const score=hScore(c.id);const hc=hColor(c.id);
+          const bc=hc==='green'?'var(--teal)':hc==='amber'?'var(--amber)':'var(--red)';
+          const lv=lastVis(c.id);
+          return `<tr><td><strong>${c.nome}</strong></td><td>${segTag(c.segmento)}</td>
+            <td><div style="display:flex;align-items:center;gap:8px;"><div style="width:80px;"><div class="hbar"><div class="hf" style="width:${score}%;background:${bc};"></div></div></div><span style="font-size:11px;font-weight:700;color:${bc};">${score}%</span></div></td>
+            <td style="font-size:12px;color:var(--text2);">${lv?fmtD(lv.data)+' ('+dSince(lv.data)+'d)':'Sem visitas'}</td></tr>`;
+        }).join('')}</tbody>
+      </table></div>
+    </div>`;
+}
+
+// ══════════════════════════════════════════════════
+// AI BRIEFING
+// ══════════════════════════════════════════════════
+async function gerarBriefing(visId) {
+  const vis = DATA.visitas.find(x => x.id === visId);
+  const cli = DATA.clientes.find(x => x.id === vis.cliente_id);
+  const histVis = DATA.visitas.filter(x => x.cliente_id === vis.cliente_id && x.status === 'realizada').sort((a, b) => b.data.localeCompare(a.data));
+  const negsAtivos = DATA.negociacoes.filter(x => x.cliente_id === vis.cliente_id && x.etapa < 4);
+  const fus = DATA.followups.filter(x => x.cliente_id === vis.cliente_id && x.status === 'pendente');
+  const histText = histVis.map(v => `Visita ${fmtD(v.data)}: "${v.objetivo}". Resultado: "${v.notas||'Sem anotações'}". Próximo passo: "${v.prox_passo||'Não registrado'}".`).join('\n\n');
+  const prompt = `Você é um consultor comercial sênior em equipamentos médico-hospitalares. Gere um briefing estratégico para a visita abaixo.
+
+CLIENTE: ${cli?.nome} | ${cli?.segmento} | Responsável: ${cli?.responsavel||'—'} | ${cli?.cidade}/${cli?.estado}
+STATUS: ${cli?.status} | Obs: ${cli?.obs||'Nenhuma'}
+PRÓXIMA VISITA: ${fmtD(vis.data)} às ${vis.hora?.slice(0,5)||''} — Objetivo: ${vis.objetivo}
+HISTÓRICO (${histVis.length} visitas): ${histText||'Nenhuma visita anterior.'}
+NEGOCIAÇÕES ATIVAS: ${negsAtivos.map(n=>`${n.tipo}: ${n.titulo} — ${etapas[n.etapa]}`).join('; ')||'Nenhuma.'}
+FOLLOW-UPS PENDENTES: ${fus.map(f=>f.obs).join('; ')||'Nenhum.'}
+
+Formato HTML (apenas <h4> e <ul><li>), 7 seções:
+<h4>📋 Resumo executivo</h4><ul><li>...</li></ul>
+<h4>🔍 Pontos-chave do histórico</h4><ul><li>...</li></ul>
+<h4>⏳ Pendências</h4><ul><li>...</li></ul>
+<h4>💡 Oportunidades</h4><ul><li>...</li></ul>
+<h4>🎯 Estratégia de abordagem</h4><ul><li>...</li></ul>
+<h4>❓ Perguntas estratégicas</h4><ul><li>...</li></ul>
+<h4>⚠️ Alertas e objeções</h4><ul><li>...</li></ul>
+2 a 4 bullets por seção. Seja específico e acionável.`;
+
+  openView(`✨ Briefing — ${cli?.nome}`, `
+    <div class="ai-panel">
+      <div class="ai-header">
+        <div class="ai-icon">🤖</div>
+        <div><div style="font-size:14px;font-weight:500;color:#fff;">Analisando histórico de ${cli?.nome}</div>
+        <div style="font-size:12px;color:rgba(255,255,255,.45);margin-top:2px;">${histVis.length} visita${histVis.length!==1?'s':''} · ${negsAtivos.length} negociação${negsAtivos.length!==1?'ões':''} ativa${negsAtivos.length!==1?'s':''}</div></div>
+      </div>
+      <div class="ai-body" id="ai-out">
+        <div style="display:flex;align-items:center;gap:8px;color:rgba(255,255,255,.5);font-size:13px;">
+          <span class="ai-dot"></span><span class="ai-dot"></span><span class="ai-dot"></span>
+          <span style="margin-left:4px;">Gerando briefing...</span>
+        </div>
+      </div>
+    </div>
+    <div style="font-size:12px;color:var(--text3);display:flex;gap:6px;"><span>ℹ</span><span>Briefing gerado por IA com base nos dados do CRM.</span></div>`);
+
+  try {
+    const { data: { session } } = await sb.auth.getSession();
+    const r = await fetch(BRIEFING_FN, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.access_token}` },
+      body: JSON.stringify({ messages: [{ role: 'user', content: prompt }] })
+    });
+    if (!r.ok) { const e = await r.json(); throw new Error(e.error || 'Erro ' + r.status); }
+    const data = await r.json();
+    const text = data.content?.find(x => x.type === 'text')?.text || 'Sem resposta.';
+    document.getElementById('ai-out').innerHTML = text;
+  } catch (e) {
+    document.getElementById('ai-out').innerHTML = `<div style="color:#FCA5A5;font-size:13px;"><strong>Erro:</strong> ${e.message}</div>`;
+  }
+}
+
+// ══════════════════════════════════════════════════
+// MODAL SYSTEM
+// ══════════════════════════════════════════════════
+let mSave = null;
+function openM(title, body, onSave) {
+  document.getElementById('m-title').textContent = title;
+  document.getElementById('m-body').innerHTML = body;
+  document.getElementById('m-foot').style.display = 'flex';
+  document.getElementById('modal').style.width = '';
+  mSave = onSave;
+  document.getElementById('overlay').classList.add('open');
+}
+function openView(title, body) {
+  document.getElementById('m-title').innerHTML = title;
+  document.getElementById('m-body').innerHTML = body;
+  document.getElementById('m-foot').style.display = 'none';
+  document.getElementById('modal').style.width = '680px';
+  document.getElementById('overlay').classList.add('open');
+}
+function closeModal() { document.getElementById('overlay').classList.remove('open'); mSave = null; document.getElementById('modal').style.width = ''; }
+function saveM() { if (mSave) mSave(); }
+function gv(id) { const e = document.getElementById(id); return e ? e.value : ''; }
+
+// ══════════════════════════════════════════════════
+// CRUD — CLIENTES
+// ══════════════════════════════════════════════════
+function openAdd() {
+  if (curPage === 'clientes') openAddCli();
+  else if (curPage === 'negociacoes') openAddNeg(0);
+  else if (curPage === 'visitas') openAddVis();
+  else if (curPage === 'posvenda') openAddFu();
+  else openAddCli();
+}
+
+function openAddCli() {
+  openM('Novo cliente', `
+    <div class="f2"><div class="fg"><label class="fl">Nome *</label><input class="fi-m" id="f-nome" placeholder="Ex: Hospital Regional Norte"></div>
+      <div class="fg"><label class="fl">Segmento *</label><select class="fi-m" id="f-seg"><option value="">Selecione</option><option>Hospital</option><option>Clínica</option><option>Laboratório</option></select></div></div>
+    <div class="f2"><div class="fg"><label class="fl">Responsável</label><input class="fi-m" id="f-resp"></div>
+      <div class="fg"><label class="fl">Telefone</label><input class="fi-m" id="f-tel"></div></div>
+    <div class="f2"><div class="fg"><label class="fl">E-mail</label><input class="fi-m" id="f-email"></div>
+      <div class="fg"><label class="fl">Cidade / Estado</label><input class="fi-m" id="f-cidade" placeholder="Fortaleza / CE"></div></div>
+    <div class="fg"><label class="fl">Observações</label><textarea class="fi-m" id="f-obs" placeholder="Contexto, interesses, contratos vigentes..."></textarea></div>`,
+  async () => {
+    const nome = gv('f-nome'); if (!nome) return alert('Nome obrigatório');
+    const cidEst = gv('f-cidade').split('/');
+    const { error } = await sb.from('clientes').insert({
+      nome, segmento: gv('f-seg'), responsavel: gv('f-resp'), telefone: gv('f-tel'),
+      email: gv('f-email'), cidade: cidEst[0]?.trim(), estado: cidEst[1]?.trim() || 'CE',
+      obs: gv('f-obs'), vendedor_id: USER.id
+    });
+    if (error) return alert(error.message);
+    await loadAllData(); closeModal(); renderClientes();
+  });
+}
+
+function openEditCli(id) {
+  const c = DATA.clientes.find(x => x.id === id);
+  openM('Editar — ' + c.nome, `
+    <div class="f2"><div class="fg"><label class="fl">Nome</label><input class="fi-m" id="f-nome" value="${c.nome}"></div>
+      <div class="fg"><label class="fl">Segmento</label><select class="fi-m" id="f-seg">${['Hospital','Clínica','Laboratório'].map(s=>`<option ${c.segmento===s?'selected':''}>${s}</option>`).join('')}</select></div></div>
+    <div class="f2"><div class="fg"><label class="fl">Responsável</label><input class="fi-m" id="f-resp" value="${c.responsavel||''}"></div>
+      <div class="fg"><label class="fl">Status</label><select class="fi-m" id="f-status">${[['ativo','Ativo'],['atencao','Atenção'],['risco','Em risco'],['inativo','Inativo']].map(([k,l])=>`<option value="${k}" ${c.status===k?'selected':''}>${l}</option>`).join('')}</select></div></div>
+    <div class="fg"><label class="fl">Observações</label><textarea class="fi-m" id="f-obs">${c.obs||''}</textarea></div>`,
+  async () => {
+    const { error } = await sb.from('clientes').update({ nome: gv('f-nome'), segmento: gv('f-seg'), responsavel: gv('f-resp'), status: gv('f-status'), obs: gv('f-obs') }).eq('id', id);
+    if (error) return alert(error.message);
+    await loadAllData(); closeModal(); renderClientes();
+  });
+}
+
+// ══════════════════════════════════════════════════
+// CRUD — NEGOCIAÇÕES
+// ══════════════════════════════════════════════════
+function openAddNeg(etapa = 0) {
+  openM('Nova negociação', `
+    <div class="fg"><label class="fl">Tipo *</label>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:4px;">
+        ${[['equipamento','🔬','Equipamento'],['aluguel','📋','Aluguel'],['comodato','🤝','Comodato']].map(([k,ico,l])=>`<div style="border:1.5px solid var(--border2);border-radius:10px;padding:12px 8px;text-align:center;cursor:pointer;font-size:12px;font-weight:600;color:var(--text2);transition:all .15s;" onclick="selTipoNeg(this,'${k}')" id="tn-${k}"><div style="font-size:20px;margin-bottom:5px;">${ico}</div>${l}</div>`).join('')}
+      </div>
+      <input type="hidden" id="f-tipo"></div>
+    <div class="fg"><label class="fl">Cliente *</label><select class="fi-m" id="f-cli">${cliOpts()}</select></div>
+    <div class="fg"><label class="fl">Título / Equipamento</label><input class="fi-m" id="f-titulo" placeholder="Ex: Analisador hematológico XN-350"></div>
+    <div class="f2"><div class="fg"><label class="fl">Valor (R$)</label><input class="fi-m" type="number" id="f-valor" placeholder="0 para comodato"></div>
+      <div class="fg"><label class="fl">Etapa</label><select class="fi-m" id="f-etapa">${etapas.slice(0,4).map((e,i)=>`<option value="${i}" ${etapa===i?'selected':''}>${e}</option>`).join('')}</select></div></div>
+    <div class="f2"><div class="fg"><label class="fl">Prioridade</label><select class="fi-m" id="f-prio">${[['urgente','🔴 Urgente'],['alta','🟠 Alta'],['media','🔵 Média'],['baixa','⚪ Baixa']].map(([k,l])=>`<option value="${k}">${l}</option>`).join('')}</select></div>
+      <div class="fg"><label class="fl">Data previsão</label><input class="fi-m" type="date" id="f-data"></div></div>
+    <div class="fg"><label class="fl">Observações / alertas</label><textarea class="fi-m" id="f-obs"></textarea></div>`,
+  async () => {
+    const tipo = gv('f-tipo'); if (!tipo) return alert('Selecione o tipo');
+    const cli = gv('f-cli'); if (!cli) return alert('Selecione o cliente');
+    const { error } = await sb.from('negociacoes').insert({
+      cliente_id: cli, tipo, titulo: gv('f-titulo'), valor: Number(gv('f-valor')) || 0,
+      etapa: Number(gv('f-etapa')), prioridade: gv('f-prio'),
+      data_prev: gv('f-data') || null, obs: gv('f-obs'), vendedor_id: USER.id
+    });
+    if (error) return alert(error.message);
+    await loadAllData(); closeModal(); renderNeg();
+  });
+}
+
+function selTipoNeg(el, tipo) {
+  document.querySelectorAll('[id^="tn-"]').forEach(x => { x.style.borderColor = 'var(--border2)'; x.style.background = ''; x.style.color = 'var(--text2)'; });
+  el.style.borderColor = 'var(--teal)'; el.style.background = 'var(--teal-bg)'; el.style.color = '#065F46';
+  document.getElementById('f-tipo').value = tipo;
+}
+
+function openNegDetail(id) {
+  const n = DATA.negociacoes.find(x => x.id === id);
+  const cli = DATA.clientes.find(x => x.id === n.cliente_id);
+  const items = DATA.checklist.filter(c => c.negociacao_id === id).sort((a,b) => a.ordem - b.ordem);
+  const prog = chkProg(id);
+  document.getElementById('m-title').innerHTML = `<div><div style="font-size:15px;font-weight:700;">${n.titulo||'Negociação'}</div><div style="font-size:12px;color:var(--text3);margin-top:2px;">${segTag(cli?.segmento||'')} ${cli?.nome||''}</div></div>`;
+  document.getElementById('m-body').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 200px;gap:18px;">
+      <div>
+        <div style="margin-bottom:14px;">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);margin-bottom:7px;">Observações</div>
+          <textarea class="fi-m" id="nd-obs" rows="3" onblur="saveNegObs('${id}')">${n.obs||''}</textarea>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);">☑️ Checklist</div>
+            ${prog?`<span style="font-size:12px;font-weight:700;color:${prog.pct===100?'var(--teal)':'var(--text2)'};">${prog.done}/${prog.total} · ${prog.pct}%</span>`:''}
+          </div>
+          ${prog?`<div class="prog-chk" style="margin-bottom:10px;"><div class="prog-chk-fill" style="width:${prog.pct}%;background:${prog.pct===100?'var(--teal)':'var(--blue)'}"></div></div>`:''}
+          <div id="nd-chklist">
+            ${items.map(c=>`<div style="display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:0.5px solid var(--border);">
+              <div onclick="toggleChkItem('${id}','${c.id}',${!c.feito})" style="width:17px;height:17px;border-radius:4px;border:2px solid ${c.feito?'var(--teal)':'var(--border2)'};background:${c.feito?'var(--teal)':'transparent'};cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                ${c.feito?'<svg width="10" height="10" viewBox="0 0 10 10"><path d="M1.5 5l2.5 2.5 4.5-5" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>':''}
+              </div>
+              <span style="flex:1;font-size:13px;${c.feito?'text-decoration:line-through;color:var(--text3);':''}">${c.texto}</span>
+              <button onclick="deleteChkItem('${id}','${c.id}')" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:16px;padding:0 2px;">×</button>
+            </div>`).join('')}
+          </div>
+          <div style="display:flex;gap:8px;margin-top:10px;">
+            <input class="fi-m" id="nd-novo-chk" placeholder="Adicionar item..." style="font-size:13px;" onkeydown="if(event.key==='Enter')addChkItem('${id}')">
+            <button class="btn btn-g btn-sm" onclick="addChkItem('${id}')">Adicionar</button>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);margin-bottom:6px;">Etapa</div>
+          <select class="fi-m" id="nd-etapa" onchange="updateNegField('${id}','etapa',Number(this.value))" style="font-size:12px;">${etapas.map((e,i)=>`<option value="${i}" ${n.etapa===i?'selected':''}>${e}</option>`).join('')}</select></div>
+        <div><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);margin-bottom:6px;">Prioridade</div>
+          <select class="fi-m" id="nd-prio" onchange="updateNegField('${id}','prioridade',this.value)" style="font-size:12px;">${[['urgente','🔴 Urgente'],['alta','🟠 Alta'],['media','🔵 Média'],['baixa','⚪ Baixa']].map(([k,l])=>`<option value="${k}" ${n.prioridade===k?'selected':''}>${l}</option>`).join('')}</select></div>
+        <div><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);margin-bottom:6px;">Data de entrega</div>
+          <input type="date" class="fi-m" value="${n.data_prev||''}" onchange="updateNegField('${id}','data_prev',this.value)" style="font-size:12px;">
+          ${n.data_prev?`<div style="margin-top:5px;">${dateLabel(n)}</div>`:''}</div>
+        <div><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);margin-bottom:6px;">Valor (R$)</div>
+          <input type="number" class="fi-m" value="${n.valor||0}" onblur="updateNegField('${id}','valor',Number(this.value))" style="font-size:12px;" placeholder="0 = Comodato"></div>
+        ${n.contrato?`<div><div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--text3);margin-bottom:6px;">Referência</div><div style="font-family:var(--mono);font-size:12px;background:var(--bg);padding:7px 10px;border-radius:6px;color:var(--teal);">${n.contrato}</div></div>`:''}
+      </div>
+    </div>`;
+  document.getElementById('m-foot').style.display = 'none';
+  document.getElementById('modal').style.width = '720px';
+  document.getElementById('overlay').classList.add('open');
+}
+
+async function updateNegField(id, field, value) {
+  await sb.from('negociacoes').update({ [field]: value }).eq('id', id);
+  const n = DATA.negociacoes.find(x => x.id === id);
+  if (n) n[field] = value;
+  renderNeg();
+}
+async function saveNegObs(id) {
+  const obs = document.getElementById('nd-obs')?.value;
+  if (obs === undefined) return;
+  await sb.from('negociacoes').update({ obs }).eq('id', id);
+  const n = DATA.negociacoes.find(x => x.id === id); if (n) n.obs = obs;
+}
+async function addChkItem(negId) {
+  const txt = document.getElementById('nd-novo-chk')?.value?.trim();
+  if (!txt) return;
+  const { data, error } = await sb.from('checklist_itens').insert({ negociacao_id: negId, texto: txt, feito: false, ordem: DATA.checklist.filter(c => c.negociacao_id === negId).length }).select().single();
+  if (!error && data) { DATA.checklist.push(data); openNegDetail(negId); }
+}
+async function toggleChkItem(negId, itemId, feito) {
+  await sb.from('checklist_itens').update({ feito }).eq('id', itemId);
+  const c = DATA.checklist.find(x => x.id === itemId); if (c) c.feito = feito;
+  openNegDetail(negId);
+}
+async function deleteChkItem(negId, itemId) {
+  await sb.from('checklist_itens').delete().eq('id', itemId);
+  DATA.checklist = DATA.checklist.filter(x => x.id !== itemId);
+  openNegDetail(negId);
+}
+
+// ══════════════════════════════════════════════════
+// CRUD — VISITAS
+// ══════════════════════════════════════════════════
+function openAddVis() {
+  openM('Agendar visita', `
+    <div class="fg"><label class="fl">Cliente *</label><select class="fi-m" id="f-cli">${cliOpts()}</select></div>
+    <div class="f2"><div class="fg"><label class="fl">Data *</label><input class="fi-m" type="date" id="f-data"></div>
+      <div class="fg"><label class="fl">Hora</label><input class="fi-m" type="time" id="f-hora" value="09:00"></div></div>
+    <div class="fg"><label class="fl">Objetivo da visita *</label><textarea class="fi-m" id="f-obj" placeholder="Ex: Apresentar proposta de comodato e alinhar necessidades com gestão..."></textarea></div>
+    <div style="background:var(--blue-bg);border:1px solid #BFDBFE;border-radius:8px;padding:10px 13px;font-size:12px;color:var(--blue-dark);line-height:1.5;">💡 Se o cliente já tiver visitas anteriores, o botão <strong>✨ Briefing IA</strong> aparecerá após salvar.</div>`,
+  async () => {
+    const obj = gv('f-obj'); if (!obj) return alert('Objetivo obrigatório');
+    const { error } = await sb.from('visitas').insert({ cliente_id: gv('f-cli'), data: gv('f-data'), hora: gv('f-hora') + ':00', objetivo: obj, vendedor_id: USER.id, status: 'agendada' });
+    if (error) return alert(error.message);
+    await loadAllData(); closeModal(); renderVisitas(); updateBadges();
+  });
+}
+
+function openEditVis(id) {
+  const v = DATA.visitas.find(x => x.id === id);
+  openM('Editar visita', `
+    <div class="fg"><label class="fl">Cliente</label><select class="fi-m" id="f-cli">${cliOpts(v.cliente_id)}</select></div>
+    <div class="f2"><div class="fg"><label class="fl">Data</label><input class="fi-m" type="date" id="f-data" value="${v.data||''}"></div>
+      <div class="fg"><label class="fl">Hora</label><input class="fi-m" type="time" id="f-hora" value="${v.hora?.slice(0,5)||'09:00'}"></div></div>
+    <div class="fg"><label class="fl">Objetivo</label><textarea class="fi-m" id="f-obj">${v.objetivo||''}</textarea></div>
+    <div class="fg"><label class="fl">Status</label><select class="fi-m" id="f-status">${[['agendada','Agendada'],['realizada','Realizada'],['cancelada','Cancelada']].map(([k,l])=>`<option value="${k}" ${v.status===k?'selected':''}>${l}</option>`).join('')}</select></div>`,
+  async () => {
+    const { error } = await sb.from('visitas').update({ cliente_id: gv('f-cli'), data: gv('f-data'), hora: gv('f-hora') + ':00', objetivo: gv('f-obj'), status: gv('f-status') }).eq('id', id);
+    if (error) return alert(error.message);
+    await loadAllData(); closeModal(); renderVisitas(); updateBadges();
+  });
+}
+
+function registrarVis(id) {
+  const v = DATA.visitas.find(x => x.id === id);
+  openM('Registrar resultado', `
+    <div style="background:var(--teal-bg);border:1px solid #A7F3D0;border-radius:8px;padding:11px 13px;margin-bottom:14px;font-size:13px;color:#065F46;"><strong>${cliName(v.cliente_id)}</strong> · ${fmtD(v.data)}</div>
+    <div class="fg"><label class="fl">O que foi discutido / resultado *</label><textarea class="fi-m" id="f-notas" rows="4" placeholder="Descreva o que aconteceu, dores identificadas, interesse do cliente, objeções...">${v.notas||''}</textarea></div>
+    <div class="fg"><label class="fl">Próximo passo definido</label><input class="fi-m" id="f-prox" placeholder="Ex: Enviar proposta formal até dia 15..." value="${v.prox_passo||''}"></div>
+    <div class="f2">
+      <div class="fg"><label class="fl">Status</label><select class="fi-m" id="f-status"><option value="realizada" selected>Realizada</option><option value="cancelada">Cancelada</option></select></div>
+      <div class="fg"><label class="fl">Criar follow-up automático?</label><select class="fi-m" id="f-fu"><option value="sim">Sim</option><option value="nao">Não</option></select></div>
+    </div>`,
+  async () => {
+    const notas = gv('f-notas'); if (!notas) return alert('Descreva o resultado');
+    const prox = gv('f-prox');
+    await sb.from('visitas').update({ notas, prox_passo: prox, status: gv('f-status') }).eq('id', id);
+    if (gv('f-fu') === 'sim' && prox) {
+      const d = new Date(v.data); d.setDate(d.getDate() + 3);
+      await sb.from('followups').insert({ cliente_id: v.cliente_id, tipo: 'Pós-visita', data_prevista: d.toISOString().slice(0, 10), obs: prox, vendedor_id: USER.id, status: 'pendente' });
+    }
+    await loadAllData(); closeModal(); renderVisitas(); updateBadges();
+  });
+}
+
+// ══════════════════════════════════════════════════
+// CRUD — FOLLOW-UP
+// ══════════════════════════════════════════════════
+function openAddFu() {
+  openM('Novo follow-up', `
+    <div class="fg"><label class="fl">Cliente *</label><select class="fi-m" id="f-cli">${cliOpts()}</select></div>
+    <div class="f2"><div class="fg"><label class="fl">Tipo</label><select class="fi-m" id="f-tipo"><option>Pós-visita</option><option>Urgente</option><option>Retorno</option><option>Proposta</option></select></div>
+      <div class="fg"><label class="fl">Data prevista *</label><input class="fi-m" type="date" id="f-data"></div></div>
+    <div class="fg"><label class="fl">O que deve ser feito</label><textarea class="fi-m" id="f-obs" placeholder="Ex: Enviar proposta revisada com desconto negociado..."></textarea></div>`,
+  async () => {
+    const { error } = await sb.from('followups').insert({ cliente_id: gv('f-cli'), tipo: gv('f-tipo'), data_prevista: gv('f-data'), obs: gv('f-obs'), status: 'pendente', vendedor_id: USER.id });
+    if (error) return alert(error.message);
+    await loadAllData(); closeModal(); renderPosvenda(); updateBadges();
+  });
+}
+
+// ══════════════════════════════════════════════════
+// START
+// ══════════════════════════════════════════════════
+initAuth();
+
+// ── Expõe funções para onclick handlers no HTML ──
+const fns = [nav,openAdd,sair,closeModal,saveM,markFu,
+  entrar,registrar,toggleMode,openAddCli,openEditCli,
+  openAddNeg,openNegDetail,selTipoNeg,addChkItem,toggleChkItem,
+  deleteChkItem,saveNegObs,updateNegField,openAddVis,openEditVis,
+  registrarVis,gerarBriefing,openAddFu,renderClientes,renderNeg,
+  renderVisitas,salvarCfg,aplicarCfg];
+fns.forEach(f => { if(f && f.name) window[f.name] = f; });
+
+} // fecha o bloco: if (CONFIGURADO)
+</script>
+</body>
+</html>

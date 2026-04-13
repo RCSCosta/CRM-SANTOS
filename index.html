@@ -402,75 +402,14 @@ textarea.fi-m{resize:vertical;min-height:72px;}
 const SUPABASE_URL = 'https://fpodkawezhwlyjnqmsvo.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZwb2RrYXdlemh3bHlqbnFtc3ZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwODk2MDQsImV4cCI6MjA5MTY2NTYwNH0.cdUnII3PRYobQIKURfprNAEjlPfN4rpE3W_mh4MiTfY';
 
-const CONFIGURADO = SUPABASE_URL.startsWith('https://fpodkawezhwlyjnqmsvo.supabase.co') && SUPABASE_KEY.startsWith('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZwb2RrYXdlemh3bHlqbnFtc3ZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwODk2MDQsImV4cCI6MjA5MTY2NTYwNH0.cdUnII3PRYobQIKURfprNAEjlPfN4rpE3W_mh4MiTfY');
+const CONFIGURADO = true;
 const BRIEFING_FN = SUPABASE_URL + '/functions/v1/briefing';
 
 const sb = CONFIGURADO
   ? supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
   : null;
 
-// ── Se não configurado, mostra tela de setup ──
-if (!CONFIGURADO) {
-  document.body.innerHTML = `
-    <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0B1629;font-family:-apple-system,sans-serif;padding:20px;">
-      <div style="background:#fff;border-radius:16px;padding:40px;max-width:520px;width:100%;">
-        <div style="display:flex;align-items:center;gap:12px;margin-bottom:28px;">
-          <div style="width:42px;height:42px;border-radius:11px;background:linear-gradient(135deg,#16A37A,#5DCAA5);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:#fff;">SS</div>
-          <div><div style="font-size:15px;font-weight:700;color:#0B1629;">Santos Solução · CRM</div><div style="font-size:12px;color:#9CA3AF;margin-top:2px;">Configuração inicial</div></div>
-        </div>
-        <h2 style="font-size:20px;font-weight:800;color:#0B1629;margin-bottom:8px;letter-spacing:-.02em;">Configure o Supabase</h2>
-        <p style="font-size:13px;color:#4B5563;margin-bottom:24px;line-height:1.6;">Para usar o CRM, insira suas credenciais do Supabase. Elas ficam apenas no seu navegador.</p>
-        <div style="margin-bottom:14px;">
-          <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#6B7280;margin-bottom:5px;display:block;">Project URL</label>
-          <input id="cfg-url" style="width:100%;padding:10px 12px;border:1px solid #D0D5DD;border-radius:8px;font-size:13px;font-family:monospace;" placeholder="https://xyzabc.supabase.co" oninput="salvarCfg()">
-        </div>
-        <div style="margin-bottom:20px;">
-          <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#6B7280;margin-bottom:5px;display:block;">Anon Public Key</label>
-          <input id="cfg-key" style="width:100%;padding:10px 12px;border:1px solid #D0D5DD;border-radius:8px;font-size:13px;font-family:monospace;" placeholder="eyJhbGciOiJIUzI1NiIs..." oninput="salvarCfg()">
-        </div>
-        <button onclick="aplicarCfg()" style="width:100%;padding:12px;background:#16A37A;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;">Salvar e entrar no CRM</button>
-        <p style="font-size:12px;color:#9CA3AF;margin-top:16px;text-align:center;">Encontre esses dados em <strong>supabase.com → Project Settings → API</strong></p>
-        <div style="margin-top:16px;background:#F0F2F5;border-radius:8px;padding:14px;">
-          <div style="font-size:12px;font-weight:700;color:#374151;margin-bottom:6px;">Como obter as credenciais:</div>
-          <ol style="font-size:12px;color:#4B5563;padding-left:16px;line-height:1.8;">
-            <li>Acesse <a href="https://supabase.com" target="_blank" style="color:#16A37A;">supabase.com</a> e faça login</li>
-            <li>Clique no seu projeto Santos Solução</li>
-            <li>Vá em <strong>Project Settings → API</strong></li>
-            <li>Copie o <strong>Project URL</strong> e a <strong>anon public</strong> key</li>
-          </ol>
-        </div>
-      </div>
-    </div>`;
 
-  // Carrega valores salvos no localStorage
-  const saved = JSON.parse(localStorage.getItem('ss_cfg') || '{}');
-  if (saved.url) document.getElementById('cfg-url').value = saved.url;
-  if (saved.key) document.getElementById('cfg-key').value = saved.key;
-
-  window.salvarCfg = () => {
-    localStorage.setItem('ss_cfg', JSON.stringify({
-      url: document.getElementById('cfg-url').value.trim(),
-      key: document.getElementById('cfg-key').value.trim()
-    }));
-  };
-  window.aplicarCfg = () => {
-    const url = document.getElementById('cfg-url').value.trim();
-    const key = document.getElementById('cfg-key').value.trim();
-    if (!url.startsWith('https://') || !key.startsWith('eyJ')) {
-      alert('URL ou chave inválida. Verifique os dados e tente novamente.');
-      return;
-    }
-    localStorage.setItem('ss_cfg', JSON.stringify({ url, key }));
-    location.reload();
-  };
-
-  // Tenta carregar credenciais salvas anteriormente
-  const cfg = JSON.parse(localStorage.getItem('ss_cfg') || '{}');
-  if (cfg.url && cfg.key && cfg.url.startsWith('https://') && cfg.key.startsWith('eyJ')) {
-    // Credenciais salvas — redireciona com parâmetro para forçar reload correto
-    // O usuário precisa editar o HTML com as credenciais corretas para produção
-  }
-} else {
 
 // ══════════════════════════════════════════════════
 // STATE
@@ -1174,7 +1113,7 @@ function openAddFu() {
 // ══════════════════════════════════════════════════
 initAuth();
 
-} // fecha o bloco: if (CONFIGURADO)
+
 </script>
 </body>
 </html>

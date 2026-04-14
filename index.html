@@ -282,6 +282,7 @@ textarea.fi-m{resize:vertical;min-height:72px;}
       <div class="ni" data-p="posvenda" onclick="nav(this,'posvenda')"><span class="ni-ico">🔔</span>Pós-visita <span class="ni-badge" id="nb-pv">0</span></div>
       <div class="nav-sec">Análise</div>
       <div class="ni" data-p="relatorios" onclick="nav(this,'relatorios')"><span class="ni-ico">📋</span>Relatórios</div>
+      <div class="ni" data-p="gestor" id="menu-gestor" onclick="nav(this,'gestor')" style="display:none;"><span class="ni-ico">👤</span>Painel do Gestor</div>
     </div>
     <div class="sb-footer">
       <div class="sb-user">
@@ -378,6 +379,13 @@ textarea.fi-m{resize:vertical;min-height:72px;}
       <div class="page" id="page-relatorios">
         <div id="rep-out"></div>
       </div>
+
+      <!-- PAINEL DO GESTOR -->
+      <div class="page" id="page-gestor">
+        <div id="gestor-tabs" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;"></div>
+        <div id="gestor-body"></div>
+      </div>
+
     </div>
   </div>
 </div>
@@ -419,8 +427,8 @@ let DATA = { clientes:[], negociacoes:[], checklist:[], visitas:[], followups:[]
 let curPage = 'dashboard';
 
 const etapas = ['Prospecção','Visita Agendada','Proposta Enviada','Negociação','Ganho ✓','Perdido ✗'];
-const ptitles = {dashboard:'Dashboard',clientes:'Clientes',negociacoes:'Negociações',visitas:'Visitas',posvenda:'Pós-visita & Follow-up',relatorios:'Relatórios'};
-const pages = ['dashboard','clientes','negociacoes','visitas','posvenda','relatorios'];
+const ptitles = {dashboard:'Dashboard',clientes:'Clientes',negociacoes:'Negociações',visitas:'Visitas',posvenda:'Pós-visita & Follow-up',relatorios:'Relatórios',gestor:'Painel do Gestor'};
+const pages = ['dashboard','clientes','negociacoes','visitas','posvenda','relatorios','gestor'];
 
 // ══════════════════════════════════════════════════
 // AUTH
@@ -446,6 +454,9 @@ async function setupUser(user) {
   document.getElementById('sb-name').textContent = perfil?.nome || user.email;
   document.getElementById('sb-role').textContent = perfil?.role === 'gestor' ? 'Gestor' : 'Vendedor(a)';
   document.getElementById('role-badge').textContent = perfil?.role === 'gestor' ? 'Gestor' : 'Vendedor';
+  if (perfil?.role === 'gestor') {
+    document.getElementById('menu-gestor').style.display = 'flex';
+  }
   showApp();
   await loadAllData();
   renderDash();
@@ -574,6 +585,7 @@ function renderPage(p) {
   else if (p === 'visitas') renderVisitas();
   else if (p === 'posvenda') renderPosvenda();
   else if (p === 'relatorios') renderRelatorios();
+  else if (p === 'gestor') renderGestor();
 }
 
 // ══════════════════════════════════════════════════
@@ -1106,6 +1118,107 @@ function openAddFu() {
     if (error) return alert(error.message);
     await loadAllData(); closeModal(); renderPosvenda(); updateBadges();
   });
+}
+
+// ══════════════════════════════════════════════════
+// PAINEL DO GESTOR
+// ══════════════════════════════════════════════════
+function renderGestor(sel) {
+  const vendedores_data = [...new Set(DATA.clientes.map(c => c.vendedor_id).filter(Boolean))];
+  const s = sel || 'ranking';
+
+  document.getElementById('gestor-tabs').innerHTML = `
+    <button style="padding:7px 16px;border-radius:20px;border:1px solid var(--border2);background:${s==='ranking'?'var(--teal)':'var(--white)'};color:${s==='ranking'?'#fff':'var(--text2)'};cursor:pointer;font-size:13px;font-weight:600;font-family:var(--font);" onclick="renderGestor('ranking')">🏆 Visão Geral</button>`;
+
+  document.getElementById('gestor-body').innerHTML = renderGestorGeral();
+}
+
+function renderGestorGeral() {
+  const ms = new Date().toISOString().slice(0, 7);
+  const visM = DATA.visitas.filter(v => v.data?.startsWith(ms));
+  const negs = DATA.negociacoes;
+  const today = new Date().toISOString().slice(0, 10);
+  const fuPend = DATA.followups.filter(f => f.status === 'pendente' && f.data_prevista <= today);
+
+  const pipeEq = negs.filter(n => n.etapa < 4 && n.tipo === 'equipamento').reduce((s,n) => s+Number(n.valor), 0);
+  const pipeAlug = negs.filter(n => n.etapa < 4 && n.tipo === 'aluguel').reduce((s,n) => s+Number(n.valor), 0);
+  const comodatos = negs.filter(n => n.etapa < 4 && n.tipo === 'comodato').length;
+
+  return `
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;">
+      <div class="sm"><div class="sm-n">${DATA.clientes.length}</div><div class="sm-l">Total de clientes</div></div>
+      <div class="sm"><div class="sm-n">${negs.filter(n=>n.etapa<4).length}</div><div class="sm-l">Negociações abertas</div></div>
+      <div class="sm"><div class="sm-n">${visM.filter(v=>v.status==='realizada').length}</div><div class="sm-l">Visitas no mês</div></div>
+      <div class="sm"><div class="sm-n" style="color:${fuPend.length>0?'var(--red)':'var(--teal)'};">${fuPend.length}</div><div class="sm-l">Follow-ups vencidos</div></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+      <div class="card" style="margin:0;">
+        <div class="ch"><span class="ct2">Pipeline por tipo</span><span class="ct" style="font-size:13px;font-weight:700;">${fmtV(pipeEq+pipeAlug)} em aberto</span></div>
+        <div class="cb2">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">${tipoTag('equipamento')}<strong style="color:var(--blue);">${fmtV(pipeEq)}</strong></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">${tipoTag('aluguel')}<strong style="color:var(--violet);">${fmtV(pipeAlug)}</strong></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;">${tipoTag('comodato')}<strong style="color:var(--amber);">${comodatos} em andamento</strong></div>
+        </div>
+      </div>
+      <div class="card" style="margin:0;">
+        <div class="ch"><span class="ct2">Saúde da carteira</span></div>
+        <div class="cb2">
+          ${(() => {
+            const g=DATA.clientes.filter(c=>hColor(c.id)==='green').length;
+            const am=DATA.clientes.filter(c=>hColor(c.id)==='amber').length;
+            const re=DATA.clientes.filter(c=>hColor(c.id)==='red').length;
+            const tot=DATA.clientes.length||1;
+            return `
+              <div style="display:flex;justify-content:space-between;margin-bottom:8px;"><span style="font-size:13px;"><span class="dot dg"></span>Em dia</span><strong style="color:var(--teal);">${g}</strong></div>
+              <div style="display:flex;justify-content:space-between;margin-bottom:8px;"><span style="font-size:13px;"><span class="dot da"></span>Atenção</span><strong style="color:var(--amber);">${am}</strong></div>
+              <div style="display:flex;justify-content:space-between;margin-bottom:12px;"><span style="font-size:13px;"><span class="dot dr"></span>Sem visita</span><strong style="color:var(--red);">${re}</strong></div>
+              <div style="height:9px;border-radius:5px;overflow:hidden;display:flex;gap:2px;">
+                <div style="flex:${g};background:var(--teal);border-radius:4px;min-width:${g?4:0}px;"></div>
+                <div style="flex:${am};background:var(--amber);border-radius:4px;min-width:${am?4:0}px;"></div>
+                <div style="flex:${re};background:var(--red);border-radius:4px;min-width:${re?4:0}px;"></div>
+              </div>
+              <p style="font-size:11px;color:var(--text3);margin-top:8px;">${tot} clientes cadastrados</p>`;
+          })()}
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><span class="ct2">Todas as negociações abertas</span></div>
+      <div class="tw"><table>
+        <thead><tr><th>Cliente</th><th>Tipo</th><th>Etapa</th><th>Valor</th><th>Prazo</th></tr></thead>
+        <tbody>${negs.filter(n=>n.etapa<4).sort((a,b)=>a.etapa-b.etapa).map(n=>`
+          <tr>
+            <td><strong>${cliName(n.cliente_id)}</strong></td>
+            <td>${tipoTag(n.tipo)}</td>
+            <td><span class="tag tgr">${etapas[n.etapa]}</span></td>
+            <td style="font-weight:700;color:var(--teal);">${n.valor>0?fmtV(n.valor):'Comodato'}</td>
+            <td>${dateLabel(n)}</td>
+          </tr>`).join('')||'<tr><td colspan="5" style="text-align:center;color:var(--text3);">Sem negociações abertas</td></tr>'}
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><span class="ct2">Todos os clientes</span></div>
+      <div class="tw"><table>
+        <thead><tr><th>Cliente</th><th>Segmento</th><th>Status</th><th>Saúde</th><th>Última visita</th></tr></thead>
+        <tbody>${DATA.clientes.map(c=>{
+          const score=hScore(c.id);const hc=hColor(c.id);
+          const bc=hc==='green'?'var(--teal)':hc==='amber'?'var(--amber)':'var(--red)';
+          const lv=lastVis(c.id);
+          return `<tr>
+            <td><strong>${c.nome}</strong></td>
+            <td>${segTag(c.segmento)}</td>
+            <td>${stag(c.status)}</td>
+            <td><div style="display:flex;align-items:center;gap:7px;"><div style="width:60px;"><div class="hbar"><div class="hf" style="width:${score}%;background:${bc};"></div></div></div><span style="font-size:11px;font-weight:700;color:${bc};">${score}%</span></div></td>
+            <td style="font-size:12px;color:var(--text2);">${lv?fmtD(lv.data)+' ('+dSince(lv.data)+'d)':'Sem visitas'}</td>
+          </tr>`;
+        }).join('')||'<tr><td colspan="5" style="text-align:center;color:var(--text3);">Sem clientes cadastrados</td></tr>'}
+        </tbody>
+      </table></div>
+    </div>`;
 }
 
 // ══════════════════════════════════════════════════
